@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Caesar Cipher (Static)</title>
+    <style>
+      body{font-family:Arial,Helvetica,sans-serif;margin:24px}
+      textarea{width:100%;box-sizing:border-box}
+      .row{display:flex;gap:8px;align-items:center;margin-top:8px}
+      .small{width:120px}
+      .candidates{margin-top:12px;font-family:monospace;white-space:pre-wrap}
+      button{padding:6px 10px}
+      .topbar{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+    </style>
+  </head>
+  <body>
+    <h1>Caesar Cipher — Browser (no server)</h1>
+    <div class="topbar">
+      <button id="encryptBtn">Encrypt →</button>
+      <button id="decryptBtn">← Decrypt</button>
+      <button id="bruteBtn">Brute-force</button>
+      <button id="copyBtn">Copy Result</button>
+      <button id="clearBtn">Clear</button>
+    </div>
+
+    <label for="text">Input text</label>
+    <textarea id="text" rows="6"></textarea>
+
+    <div class="row">
+      <div class="small">
+        <label for="shift">Shift (0-25)</label><br>
+        <input id="shift" type="number" min="0" max="25" value="3">
+      </div>
+      <div style="flex:1"></div>
+    </div>
+
+    <h2>Result</h2>
+    <textarea id="result" rows="6" readonly></textarea>
+
+    <div id="candidatesArea"></div>
+
+    <script>
+      // Caesar cipher logic in JS (preserve case and non-alpha)
+      function shiftChar(c, shift) {
+        if (!(/[a-zA-Z]/).test(c)) return c;
+        const isUpper = (c === c.toUpperCase());
+        const base = isUpper ? 'A'.charCodeAt(0) : 'a'.charCodeAt(0);
+        const pos = c.charCodeAt(0) - base;
+        const newPos = (pos + shift + 26) % 26;
+        return String.fromCharCode(base + newPos);
+      }
+
+      function transform(text, shift) {
+        shift = ((shift % 26) + 26) % 26;
+        let out = '';
+        for (let i = 0; i < text.length; i++) {
+          out += shiftChar(text[i], shift);
+        }
+        return out;
+      }
+
+      function encrypt() {
+        const txt = document.getElementById('text').value;
+        const shift = parseInt(document.getElementById('shift').value) || 0;
+        document.getElementById('result').value = transform(txt, shift);
+        document.getElementById('candidatesArea').innerHTML = '';
+      }
+
+      function decrypt() {
+        const txt = document.getElementById('text').value;
+        const shift = parseInt(document.getElementById('shift').value) || 0;
+        document.getElementById('result').value = transform(txt, -shift);
+        document.getElementById('candidatesArea').innerHTML = '';
+      }
+
+      function brute() {
+        const txt = document.getElementById('text').value;
+        let html = '<h3>Brute-force candidates</h3><div class="candidates">';
+        for (let s = 0; s < 26; s++) {
+          html += '<div><strong>' + String(s).padStart(2, '0') + ':</strong> ' + transform(txt, -s) + '</div>';
+        }
+        html += '</div>';
+        document.getElementById('candidatesArea').innerHTML = html;
+      }
+
+      function copyResult() {
+        const r = document.getElementById('result');
+        r.select();
+        document.execCommand('copy');
+        alert('Result copied to clipboard');
+      }
+
+      function clearAll() {
+        document.getElementById('text').value = '';
+        document.getElementById('result').value = '';
+        document.getElementById('candidatesArea').innerHTML = '';
+      }
+
+      document.getElementById('encryptBtn').addEventListener('click', encrypt);
+      document.getElementById('decryptBtn').addEventListener('click', decrypt);
+      document.getElementById('bruteBtn').addEventListener('click', brute);
+      document.getElementById('copyBtn').addEventListener('click', copyResult);
+      document.getElementById('clearBtn').addEventListener('click', clearAll);
+
+      // keyboard shortcuts
+      document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && e.key === 'e') { e.preventDefault(); encrypt(); }
+        if (e.ctrlKey && e.key === 'd') { e.preventDefault(); decrypt(); }
+      });
+    </script>
+  </body>
+</html>

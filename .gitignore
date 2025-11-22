@@ -1,0 +1,37 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage reports
+.tox/
+.coverage
+.coverage.*
+.pytest_cache/
+
+# IDEs and editors
+.idea/
+.vscode/
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log
+
+# Local Netlify folder
+.netlify

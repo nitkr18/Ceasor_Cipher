@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Caesar Cipher</title>
+    <style>
+      body { font-family: Arial, Helvetica, sans-serif; margin: 24px; }
+      textarea { width: 100%; box-sizing: border-box; }
+      .row { display:flex; gap:8px; align-items:center; margin-top:8px }
+      .col { flex:1 }
+      .small { width:80px }
+      .candidates { margin-top:12px; font-family: monospace; white-space: pre-wrap }
+      button { padding:6px 10px }
+    </style>
+  </head>
+  <body>
+    <h1>Caesar Cipher</h1>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+          {% for m in messages %}
+            <li style="color: darkred">{{ m }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <form method="post">
+      <label for="text">Input text</label>
+      <textarea id="text" name="text" rows="6">{{ text or '' }}</textarea>
+
+      <div class="row">
+        <div class="small">
+          <label for="shift">Shift</label><br>
+          <input id="shift" name="shift" type="number" min="0" max="25" value="{{ shift }}">
+        </div>
+        <div class="col">
+          <label>&nbsp;</label><br>
+          <button type="submit" name="action" value="encrypt">Encrypt →</button>
+          <button type="submit" name="action" value="decrypt">← Decrypt</button>
+          <button type="submit" name="action" value="bruteforce">Brute-force</button>
+        </div>
+      </div>
+    </form>
+
+    <h2>Result</h2>
+    <textarea id="result" rows="6" readonly>{{ result or '' }}</textarea>
+    <div style="margin-top:8px">
+      <button onclick="copyResult()">Copy Result</button>
+      <button onclick="clearAll()">Clear</button>
+    </div>
+
+    {% if candidates %}
+      <h3>Brute-force candidates</h3>
+      <div class="candidates">
+        {% for s, txt in candidates %}
+          <div><strong>{{ '%02d'|format(s) }}:</strong> {{ txt }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <script>
+      function copyResult() {
+        const r = document.getElementById('result');
+        r.select();
+        document.execCommand('copy');
+        alert('Result copied to clipboard');
+      }
+      function clearAll() {
+        document.getElementById('text').value = '';
+        document.getElementById('result').value = '';
+      }
+    </script>
+  </body>
+</html>
